@@ -4,8 +4,7 @@ process ClumpAndProxies {
     label 'plink'
 
     input:
-        tuple val(pheno), path(parsed_file)
-        //val params // Directly pass the params object
+        tuple val(pheno), path(parsed_file), path(bed), path(bim), path(fam)
 
     output:
         path("${pheno}_clumped.snplist")
@@ -20,7 +19,7 @@ process ClumpAndProxies {
 
         then
 
-            plink --bfile ${params.ref} \\
+            plink --bfile ${bed.baseName} \\
                 --clump ${parsed_file} \\
                 --clump-field ${params.clump_field} \\
                 --clump-p1 ${params.clump_p1} \\
@@ -36,7 +35,7 @@ process ClumpAndProxies {
             awk '{print \$3}' ${pheno}.clumped > ${pheno}_clumped.snplist
             echo "Data clumped"
 
-            plink --bfile ${params.ref} \\
+            plink --bfile ${bed.baseName} \\
                 --r2 \\
                 --ld-window 1000000 \\
                 --ld-window-kb 1000 \\

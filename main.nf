@@ -24,9 +24,10 @@ Channel
     .ifEmpty { exit 1, "Sumstats directory is empty!" }
     .set { input_files_ch }
 
-Channel
-    .fromPath(["${params.ref}.bed", "${params.ref}.bim", "${params.ref}.fam"], checkIfExists: true)
-    .ifEmpty { exit 1, "Reference directory is empty!" }
+  Channel
+    .from(params.ref)
+    .ifEmpty { exit 1, "Input plink prefix not found!" }
+    .map { study -> [file("${study}.bed"), file("${study}.bim"), file("${study}.fam")]}
     .set { ref_ch }
 
 Channel
@@ -63,7 +64,7 @@ workflow {
     //input_files_ch.view()
     PARSE_SUMSTATS(input_files_ch)
 
-    parsed_files_ch = PARSE_SUMSTATS.out
+    parsed_files_ch = PARSE_SUMSTATS.out.combine(ref_ch)
 
     CLUMP_AND_PROXIES(parsed_files_ch)
 }
