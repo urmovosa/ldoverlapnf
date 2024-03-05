@@ -9,11 +9,14 @@ process ParseSumstats {
         path(file)
 
     output:
-        path("*_processed.txt")
+       tuple env(phenoname), path("*_processed.txt")
 
     script:
     """
-    Rscript --vanilla $baseDir/bin/parse.R $file
+    Rscript --vanilla ${baseDir}/bin/parse.R ${file}
+
+    #Parse phenotype name
+    phenoname=\$(ls *_processed* | cut -d '_' -f 1)
     """
 }
 
