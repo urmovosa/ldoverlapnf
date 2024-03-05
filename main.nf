@@ -21,12 +21,21 @@ include { CLUMP_AND_PROXIES } from './modules/ClumpAndProxies.nf'
 
 Channel
     .fromPath("${params.inputDir}/*.parquet.snappy", checkIfExists: true)
-    .ifEmpty { exit 1, "Input directory is empty!" }
+    .ifEmpty { exit 1, "Sumstats directory is empty!" }
     .set { input_files_ch }
 
+Channel
+    .fromPath(["${params.ref}.bed", "${params.ref}.bim", "${params.ref}.fam"], checkIfExists: true)
+    .ifEmpty { exit 1, "Reference directory is empty!" }
+    .set { ref_ch }
+
+Channel
+    .fromPath("${params.extract}", checkIfExists: true)
+    .ifEmpty { exit 1, "Reference directory is empty!" }
+    .set { snplist_ch }
 
 // Create a value channel for the parameters
-params_ch = Channel.value(tuple(params.ref, params.clump_field, params.clump_p1, params.clump_p2, params.clump_r2, params.clump_kb, params.clump_snp_field, params.extract, params.outp_folder))
+params_ch = Channel.value(tuple(params.ref, params.clump_field, params.clump_p1, params.clump_p2, params.clump_r2, params.clump_kb, params.clump_snp_field))
 // Before calling the process or workflow
 println("Input Directory: ${params.inputDir}")
 
@@ -54,7 +63,7 @@ workflow {
     //input_files_ch.view()
     PARSE_SUMSTATS(input_files_ch)
 
-    parsed_files_ch = PARSE_SUMSTATS.out.view()
+    parsed_files_ch = PARSE_SUMSTATS.out
 
-    //CLUMP_AND_PROXIES(parsed_files_ch, params)
+    CLUMP_AND_PROXIES(parsed_files_ch)
 }
