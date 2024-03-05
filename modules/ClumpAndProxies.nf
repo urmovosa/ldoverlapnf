@@ -12,12 +12,12 @@ process ClumpAndProxies {
     script:
         """
         # Find if there are any significant results
-        sig_results=\$(awk '\$2 < 5e-8' ${parsed_file} | wc -l)
+        sig_results=\$(awk '\$2 < ${params.clump_p1}' ${parsed_file} | wc -l)
 
-        if (\${sig_results}>0)
-        echo "There are sig. results!"
+        if ((sig_results>0))
 
         then
+            echo "There are sig. results!"
 
             plink --bfile ${bed.baseName} \\
                 --clump ${parsed_file} \\
@@ -47,7 +47,7 @@ process ClumpAndProxies {
                 --memory 24000
 
             echo "Proxies calculated!"
-
+          
         else
 
             echo "No clumps formed!"
