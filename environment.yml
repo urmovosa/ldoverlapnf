@@ -1,0 +1,11 @@
+name: ldoverlapdeps
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - bioconda::plink
+  - r-base
+  - r-arrow
+  - r-stringr
+  - r-data.table
