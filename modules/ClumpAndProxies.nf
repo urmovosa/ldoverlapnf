@@ -12,35 +12,49 @@ process ClumpAndProxies {
 
     script:
         """
-        plink --bfile ${params.ref} \\
-            --clump ${parsed_file} \\
-            --clump-field ${params.clump_field} \\
-            --clump-p1 ${params.clump_p1} \\
-            --clump-p2 ${params.clump_p2} \\
-            --clump-r2 ${params.clump_r2} \\
-            --clump-kb ${params.clump_kb} \\
-            --clump-snp-field ${params.clump_snp_field} \\
-            --extract ${params.extract} \\
-            --out ${pheno} \\
-            --threads 1 \\
-            --memory 24000
+        # Find if there are any significant results
+        sig_results=\$(awk '\$2 < 5e-8' ${parsed_file} | wc -l)
+
+        if (\${sig_results}>0)
+        echo "There are sig. results!"
+
+        then
+
+            plink --bfile ${params.ref} \\
+                --clump ${parsed_file} \\
+                --clump-field ${params.clump_field} \\
+                --clump-p1 ${params.clump_p1} \\
+                --clump-p2 ${params.clump_p2} \\
+                --clump-r2 ${params.clump_r2} \\
+                --clump-kb ${params.clump_kb} \\
+                --clump-snp-field ${params.clump_snp_field} \\
+                --extract ${params.extract} \\
+                --out ${pheno} \\
+                --threads 1 \\
+                --memory 24000
         
-        awk '{print \$3}' ${pheno}.clumped > ${pheno}_clumped.snplist
-        echo "Data clumped"
+            awk '{print \$3}' ${pheno}.clumped > ${pheno}_clumped.snplist
+            echo "Data clumped"
 
-        plink --bfile ${params.ref} \\
-            --clump ${parsed_file} \\ # Corrected from processed_file to parsed_file
-            --clump-field ${params.clump_field} \\
-            --r2 \\
-            --ld-window 1000000 \\
-            --ld-window-kb 1000 \\
-            --ld-window-r2 0.8 \\
-            --ld-snp-list ${pheno}_clumped.snplist \\
-            --out ${pheno} \\
-            --threads 1 \\
-            --memory 24000
+            plink --bfile ${params.ref} \\
+                --r2 \\
+                --ld-window 1000000 \\
+                --ld-window-kb 1000 \\
+                --ld-window-r2 0.8 \\
+                --ld-snp-list ${pheno}_clumped.snplist \\
+                --extract ${params.extract} \\
+                --out ${pheno} \\
+                --threads 1 \\
+                --memory 24000
 
-        echo "Proxies calculated!"
+            echo "Proxies calculated!"
+
+        else
+
+            echo "No clumps formed!"
+            touch ${pheno}_clumped.snplist
+
+        fi
         """
 }
 
