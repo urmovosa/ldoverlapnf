@@ -1,28 +1,34 @@
 library(data.table)
-library(dplyr)
-
-setDTthreads(8)
 
 args <- commandArgs(trailingOnly = TRUE)
 
-proxies <- fread(args[1])
+res <- fread(args[1])
+pheno_name <- args[2]
 
-gwas_cat <- fread(args[2])
+if (nrow(res) > 0){
 
-proxies$proxy_ID <- paste(proxies$proxy_SNP_chr, proxies$proxy_SNP_bp, sep = "_")
-gwas_cat$snp_ID <- paste(gwas_cat$CHR_ID, gwas_cat$CHR_POS, sep = "_")
+res <- data.table(
+pheno = pheno_name, 
+lead_SNP = res$SNP_A,
+lead_SNP_chr = res$CHR_A,
+lead_SNP_bp = res$BP_A,
+proxy_SNP = res$SNP_B,
+proxy_SNP_chr = res$CHR_B,
+proxy_SNP_bp = res$BP_B,
+R2 = res$R2)
 
-comb <- merge(proxies, gwas_cat, by.x = "proxy_ID", by.y = "snp_ID", all.x = TRUE)
-comb <- comb[, -1, with = FALSE]
+} else {
 
-comb_summary <- unique(comb[, c(1, 2, 9:46), with = FALSE])
+res <- data.table(
+pheno = NA, 
+lead_SNP = NA,
+lead_SNP_chr = NA,
+lead_SNP_bp = NA,
+proxy_SNP = NA,
+proxy_SNP_chr = NA,
+proxy_SNP_bp = NA,
+R2 = NA)[-1, ]
 
-comb_summary2 <- comb_summary %>%
-filter(!is.na(`DISEASE/TRAIT`)) %>%
-group_by(lead_SNP) %>%
-reframe(pheno = pheno, phenotypes = paste(unique(`DISEASE/TRAIT`), collapse = "; "),
-ontologies = paste(unique(`MAPPED_TRAIT`), collapse = "; ")) %>%
-unique()
+}
 
-fwrite(comb_summary2, "GWAS_catalogue_overlap_summary.txt", sep = "\t")
-fwrite(comb, "clumps_proxies_GWAS_catalogue_overlap_detailed.txt", sep = "\t")
+fwrite(res, paste0(pheno_name, ".proxies"), sep = "\t")
