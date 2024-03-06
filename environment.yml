@@ -9,3 +9,4 @@ dependencies:
   - r-arrow
   - r-stringr
   - r-data.table
+  - r-tidyverse

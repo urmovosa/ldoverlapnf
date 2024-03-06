@@ -7,7 +7,7 @@ process ClumpAndProxies {
         tuple val(pheno), path(parsed_file), path(bed), path(bim), path(fam)
 
     output:
-        path("${pheno}_clumped.snplist")
+        path("${pheno}.proxies")
 
     script:
         """
@@ -47,13 +47,16 @@ process ClumpAndProxies {
                 --memory 24000
 
             echo "Proxies calculated!"
-          
+      
         else
 
             echo "No clumps formed!"
-            touch ${pheno}_clumped.snplist
 
         fi
+
+        # Clean proxy file
+        Rscript --vanilla ${baseDir}/bin/CleanClumps.R ${pheno}.ld ${pheno}
+        echo "Files cleaned!"
         """
 }
 
