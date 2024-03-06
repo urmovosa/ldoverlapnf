@@ -47,16 +47,18 @@ process ClumpAndProxies {
                 --memory 24000
 
             echo "Proxies calculated!"
-      
+
+            # Clean proxy file
+            Rscript --vanilla ${baseDir}/bin/CleanClumps.R ${pheno}.ld ${pheno}
+            echo "Files cleaned!"
+        
         else
 
             echo "No clumps formed!"
+            echo "pheno	lead_SNP\\tlead_SNP_chr\\tlead_SNP_bp\\tproxy_SNP\\tproxy_SNP_chr\\tproxy_SNP_bp\\tR2\\n">  ${pheno}.proxies
 
         fi
 
-        # Clean proxy file
-        Rscript --vanilla ${baseDir}/bin/CleanClumps.R ${pheno}.ld ${pheno}
-        echo "Files cleaned!"
         """
 }
 
