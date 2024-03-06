@@ -10,7 +10,7 @@ process OverlapGwasCat {
         tuple path(file), path(gwascat)
 
     output:
-        tuple path("GWAS_catalogue_overlap_summary.txt"), path("clumps_proxies_GWAS_catalogue_overlap_detailed.txt")
+        tuple path("GWAS_catalogue_overlap_summary.txt"), path("clumps_proxies_GWAS_catalogue_overlap_detailed.txt"), path("GWAS_catalogue_overlap_novel.txt")
 
     script:
     """
