@@ -23,8 +23,8 @@ comb_summary <- unique(comb[, c(1, 2, 9:46), with = FALSE])
 comb_summary2 <- comb_summary %>%
 filter(!is.na(`DISEASE/TRAIT`)) %>%
 group_by(lead_SNP) %>%
-reframe(pheno = pheno, phenotypes = paste(unique(`DISEASE/TRAIT`), collapse = "|"),
-ontologies = paste(unique(`MAPPED_TRAIT`), collapse = "|")) %>%
+reframe(pheno = pheno, phenotypes = paste(unique(`DISEASE/TRAIT`), collapse = "; "),
+ontologies = paste(unique(`MAPPED_TRAIT`), collapse = "; ")) %>%
 unique()
 
 novel_variants <- unique(comb[!comb$lead_SNP %in% comb_summary2$lead_SNP, c(1, 2), with = FALSE])

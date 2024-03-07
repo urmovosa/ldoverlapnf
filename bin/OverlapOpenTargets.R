@@ -25,9 +25,9 @@ comb_summary <- comb[, c(1, 2, 9:ncol(comb)), with = FALSE]
 comb_summary2 <- comb_summary %>%
 filter(!is.na(trait_efos)) %>%
 group_by(lead_SNP) %>%
-reframe(pheno = pheno, phenotypes = paste(unique(trait_reported), collapse = "|"),
-efos = paste(unique(trait_efos), collapse = "|"),
-ontologies = paste(unique(trait_category), collapse = "|")) %>%
+reframe(pheno = pheno, phenotypes = paste(unique(trait_reported), collapse = "; "),
+efos = paste(unique(trait_efos), collapse = "; "),
+ontologies = paste(unique(trait_category), collapse = "; ")) %>%
 unique()
 
 novel_variants <- unique(comb[!comb$lead_SNP %in% comb_summary2$lead_SNP, c(1, 2), with = FALSE])
