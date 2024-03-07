@@ -4,7 +4,7 @@ process OverlapGwasCat {
     //tag "${file.baseName}"
     label 'R'  // Assuming 'R' label is defined in your nextflow.config for R-specific resources
 
-    publishDir "${params.OutputDir}", mode: 'copy', overwrite: true, pattern: "*_catalogue_*.txt"
+    publishDir "${params.outputDir}", mode: 'copy', overwrite: true, pattern: "*_catalogue_*.txt"
 
     input:
         tuple path(file), path(gwascat)

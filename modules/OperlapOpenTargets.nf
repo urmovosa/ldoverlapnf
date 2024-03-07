@@ -4,17 +4,17 @@ process OverlapOpenTargets {
     //tag "${file.baseName}"
     label 'R'  // Assuming 'R' label is defined in your nextflow.config for R-specific resources
 
-    publishDir "${params.OutputDir}", mode: 'copy', overwrite: true, pattern: "*Opentargets_*.txt"
+    publishDir "${params.outputDir}", mode: 'copy', overwrite: true, pattern: "*OpenTargets_*.txt"
 
     input:
-        tuple path(file), path(gwascat)
+        tuple path(file), path(opentargets)
 
     output:
-        tuple path("Opentargets_overlap_summary.txt"), path("clumps_proxies_Opentargets_overlap_detailed.txt"), path("GWAS_catalogue_overlap_novel.txt")
+        tuple path("OpenTargets_overlap_summary.txt"), path("clumps_proxies_OpenTargets_overlap_detailed.txt"), path("OpenTargets_overlap_novel.txt")
 
     script:
     """
-    Rscript --vanilla ${baseDir}/bin/OverlapOpentargets.R ${file} ${gwascat}
+    Rscript --vanilla ${baseDir}/bin/OverlapOpenTargets.R ${file} ${opentargets}
     """
 }
 

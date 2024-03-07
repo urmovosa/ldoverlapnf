@@ -8,6 +8,7 @@ args <- commandArgs(trailingOnly = TRUE)
 proxies <- fread(args[1])
 
 gwas_cat <- fread(args[2])
+#TODO decide if apply P=5e-8 filter
 
 proxies$proxy_ID <- paste(proxies$proxy_SNP_chr, proxies$proxy_SNP_bp, sep = "_")
 gwas_cat$snp_ID <- paste(gwas_cat$CHR_ID, gwas_cat$CHR_POS, sep = "_")
@@ -22,8 +23,8 @@ comb_summary <- unique(comb[, c(1, 2, 9:46), with = FALSE])
 comb_summary2 <- comb_summary %>%
 filter(!is.na(`DISEASE/TRAIT`)) %>%
 group_by(lead_SNP) %>%
-reframe(pheno = pheno, phenotypes = paste(unique(`DISEASE/TRAIT`), collapse = "; "),
-ontologies = paste(unique(`MAPPED_TRAIT`), collapse = "; ")) %>%
+reframe(pheno = pheno, phenotypes = paste(unique(`DISEASE/TRAIT`), collapse = "|"),
+ontologies = paste(unique(`MAPPED_TRAIT`), collapse = "|")) %>%
 unique()
 
 novel_variants <- unique(comb[!comb$lead_SNP %in% comb_summary2$lead_SNP, c(1, 2), with = FALSE])
