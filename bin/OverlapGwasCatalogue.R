@@ -15,6 +15,8 @@ gwas_cat$snp_ID <- paste(gwas_cat$CHR_ID, gwas_cat$CHR_POS, sep = "_")
 comb <- merge(proxies, gwas_cat, by.x = "proxy_ID", by.y = "snp_ID", all.x = TRUE)
 comb <- comb[, -1, with = FALSE]
 
+comb <- comb[order(comb$pheno), ]
+
 comb_summary <- unique(comb[, c(1, 2, 9:46), with = FALSE])
 
 comb_summary2 <- comb_summary %>%
