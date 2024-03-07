@@ -33,6 +33,8 @@ process ClumpAndProxies {
                 --memory 24000
         
             awk '{print \$3}' ${pheno}.clumped > ${pheno}_clumped.snplist
+
+            awk '{print \$3, \$5}' ${pheno}.clumped > ${pheno}_clumped_pvalues.txt
             echo "Data clumped"
 
             plink --bfile ${bed.baseName} \\
@@ -48,14 +50,14 @@ process ClumpAndProxies {
 
             echo "Proxies calculated!"
 
-            # Clean proxy file
-            Rscript --vanilla ${baseDir}/bin/CleanClumps.R ${pheno}.ld ${pheno}
-            echo "Files cleaned!"
-        
+        # Clean proxy file
+        Rscript --vanilla ${baseDir}/bin/CleanClumps.R ${pheno}.ld ${pheno} ${pheno}_clumped_pvalues.txt
+        echo "Files cleaned!"
+      
         else
 
             echo "No clumps formed!"
-            echo "pheno	lead_SNP\\tlead_SNP_chr\\tlead_SNP_bp\\tproxy_SNP\\tproxy_SNP_chr\\tproxy_SNP_bp\\tR2\\n">  ${pheno}.proxies
+            echo "pheno	lead_SNP\tlead_SNP_chr\tlead_SNP_bp\tP\tproxy_SNP\tproxy_SNP_chr\tproxy_SNP_bp\tR2">  ${pheno}.proxies
 
         fi
 
