@@ -20,6 +20,8 @@ comb <- comb[, -1, with = FALSE]
 
 comb <- comb[order(comb$pheno), ]
 
+comb <- comb[, lapply(.SD, as.character)]
+
 comb_summary <- comb[, c(1, 2, 9:ncol(comb)), with = FALSE]
 
 comb_summary2 <- comb_summary %>%
@@ -33,7 +35,7 @@ unique()
 novel_variants <- unique(comb[!comb$lead_SNP %in% comb_summary2$lead_SNP, c(1, 2), with = FALSE])
 
 #print(apply(comb, 2, class)[1:10])
-comb <- comb[, lapply(.SD, as.character)]
+
 
 fwrite(novel_variants, "OpenTargets_overlap_novel.txt", sep = "\t")
 fwrite(comb_summary2, "OpenTargets_overlap_summary.txt", sep = "\t")
