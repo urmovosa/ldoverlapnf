@@ -12,7 +12,7 @@ process ClumpAndProxies {
     script:
         """
         # Find if there are any significant results
-        sig_results=\$(awk '\$2 < ${params.clump_p1}' ${parsed_file} | wc -l)
+        sig_results=\$(awk '\$2 < ${params.clump_p1} && $2 != ""' ${parsed_file} | wc -l)
 
         if ((sig_results>0))
 
