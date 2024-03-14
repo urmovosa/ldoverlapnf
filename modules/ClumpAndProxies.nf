@@ -31,28 +31,35 @@ process ClumpAndProxies {
                 --out ${pheno} \\
                 --threads 1 \\
                 --memory 24000
-        
-            awk '{print \$3}' ${pheno}.clumped > ${pheno}_clumped.snplist
+            if test -e ${pheno}.clumped
+            then
+                awk '{print \$3}' ${pheno}.clumped > ${pheno}_clumped.snplist
 
-            awk '{print \$3, \$5}' ${pheno}.clumped > ${pheno}_clumped_pvalues.txt
-            echo "Data clumped"
+                awk '{print \$3, \$5}' ${pheno}.clumped > ${pheno}_clumped_pvalues.txt
+                echo "Data clumped"
 
-            plink --bfile ${bed.baseName} \\
-                --r2 \\
-                --ld-window 1000000 \\
-                --ld-window-kb 1000 \\
-                --ld-window-r2 0.8 \\
-                --ld-snp-list ${pheno}_clumped.snplist \\
-                --extract ${params.extract} \\
-                --out ${pheno} \\
-                --threads 1 \\
-                --memory 24000
+                plink --bfile ${bed.baseName} \\
+                    --r2 \\
+                    --ld-window 1000000 \\
+                    --ld-window-kb 1000 \\
+                    --ld-window-r2 0.8 \\
+                    --ld-snp-list ${pheno}_clumped.snplist \\
+                    --extract ${params.extract} \\
+                    --out ${pheno} \\
+                    --threads 1 \\
+                    --memory 24000
 
-            echo "Proxies calculated!"
+                echo "Proxies calculated!"
 
-        # Clean proxy file
-        Rscript --vanilla ${baseDir}/bin/CleanClumps.R ${pheno}.ld ${pheno} ${pheno}_clumped_pvalues.txt
-        echo "Files cleaned!"
+                # Clean proxy file
+                Rscript --vanilla ${baseDir}/bin/CleanClumps.R ${pheno}.ld ${pheno} ${pheno}_clumped_pvalues.txt
+                echo "Files cleaned!"
+
+            else
+
+            echo "pheno	lead_SNP\tlead_SNP_chr\tlead_SNP_bp\tP\tproxy_SNP\tproxy_SNP_chr\tproxy_SNP_bp\tR2">  ${pheno}.proxies
+            
+            fi
       
         else
 
